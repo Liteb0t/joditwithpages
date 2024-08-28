@@ -1,10 +1,10 @@
 mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
 cwd := $(dir $(mkfile_path))
 pwd := $(shell pwd)
-build ?= es2015
+build ?= es2021
 devMode ?= development
 generateTypes ?= false
-es ?= es2015
+es ?= es2021
 uglify ?= true
 browsers ?= FirefoxHeadless
 includeLanguages ?= ''

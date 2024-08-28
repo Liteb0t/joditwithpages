@@ -33,6 +33,7 @@ import type {
 } from 'jodit/types';
 import type * as Modules from 'jodit/modules';
 import * as constants from 'jodit/core/constants';
+import pages from 'jodit/core/pages/fuze-pages';
 import { FAT_MODE, IS_PROD, lang } from 'jodit/core/constants';
 import {
 	autobind,
@@ -1337,11 +1338,19 @@ export class Jodit extends ViewWithToolbar implements IJodit, Dlgs {
 			element.style.display = 'none';
 		}
 
-		const workplace = this.c.div('jodit-workplace', {
-			contenteditable: false
-		});
+		// const workplace = this.c.div('jodit-workplace', {
+		// 	contenteditable: false
+		// });
+		const workplace = document.createElement("div");
+		workplace.classList.add("jodit-workplace");
+		workplace.id = "jodit-workplace-1";
+		// workplace.setAttribute("contenteditable", "false");
 
 		container.appendChild(workplace);
+
+		this.fuze_pages = new pages(workplace, {
+			"frame_defined_as_element": true
+		});
 
 		if (element.parentNode && element !== container) {
 			element.parentNode.insertBefore(container, element);
@@ -1353,13 +1362,15 @@ export class Jodit extends ViewWithToolbar implements IJodit, Dlgs {
 			value: this
 		});
 
-		const editor = this.c.div('jodit-wysiwyg', {
-			contenteditable: true,
-			'aria-disabled': false,
-			tabindex: this.o.tabIndex
-		});
+		const editor = this.fuze_pages.pages[0].content;
+		editor.classList.add("jodit-wysiwyg");
+		// const editor = this.c.div('jodit-wysiwyg', {
+		// 	contenteditable: true,
+		// 	'aria-disabled': false,
+		// 	tabindex: this.o.tabIndex
+		// });
 
-		workplace.appendChild(editor);
+		// workplace.appendChild(editor);
 
 		const currentPlace: IWorkPlace = {
 			editor,
