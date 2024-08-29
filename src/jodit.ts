@@ -1348,6 +1348,16 @@ export class Jodit extends ViewWithToolbar implements IJodit, Dlgs {
 
 		container.appendChild(workplace);
 
+		let editor;
+		document.addEventListener("onnewpage", event => {
+			event.detail.content.classList.add("jodit-wysiwyg");
+		});
+
+		document.addEventListener("onpagecontentfocus", event => {
+			if (this.editor !== event.detail.content) {
+				this.editor = event.detail.content;
+			}
+		});
 		this.fuze_pages = new pages(workplace, {
 			"frame_defined_as_element": true
 		});
@@ -1362,13 +1372,15 @@ export class Jodit extends ViewWithToolbar implements IJodit, Dlgs {
 			value: this
 		});
 
-		const editor = this.fuze_pages.pages[0].content;
-		editor.classList.add("jodit-wysiwyg");
+		editor = this.fuze_pages.pages[0].content;
+		// editor.classList.add("jodit-wysiwyg");
 		// const editor = this.c.div('jodit-wysiwyg', {
 		// 	contenteditable: true,
 		// 	'aria-disabled': false,
 		// 	tabindex: this.o.tabIndex
 		// });
+		// console.log(this.editor);
+
 
 		// workplace.appendChild(editor);
 

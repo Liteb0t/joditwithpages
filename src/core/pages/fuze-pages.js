@@ -100,6 +100,7 @@ class Pages {
 			});
 		}
 		this.new_caret_node, this.new_caret_offset;
+		this.currently_focused_content;
 	}
 
 	static pixelsToNumber(to_convert) {
@@ -707,6 +708,17 @@ class Page {
 		});
 		document.dispatchEvent(new_page_event);
 
+		let content_focus_event = new CustomEvent("onpagecontentfocus", {
+			"detail": this
+		});
+		this.content.onfocus = () => {
+			if (pages_container.currently_focused_content !== this.content) {
+				pages_container.currently_focused_content = this.content;
+				console.log(document.activeElement);
+				document.dispatchEvent(content_focus_event);
+			}
+		}
+
 		this.main.onclick = () => {
 			this.content.focus();
 		}
@@ -1024,8 +1036,8 @@ class Page {
 	}
 
 	delete() {
-		let delete_event = new CustomEvent("ondeletepage", event => {
-			"details": this
+		let delete_event = new CustomEvent("ondeletepage", {
+			"detail": this
 		});
 		document.dispatchEvent(delete_event);
 		this.pages_container.page_container_element.removeChild(this.pages_container.pages[this.page_number].element);
