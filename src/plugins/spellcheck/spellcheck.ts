@@ -15,6 +15,7 @@ import { autobind } from 'jodit/core/decorators';
 import { extendLang, pluginSystem } from 'jodit/core/global';
 import { attr } from 'jodit/core/helpers/utils/attr';
 import { Plugin } from 'jodit/core/plugin';
+import { fuze_pages } from 'jodit/jodit.ts';
 
 import './config';
 
@@ -49,7 +50,13 @@ export class spellcheck extends Plugin {
 
 	@autobind
 	private toggleSpellcheck(): void {
-		attr(this.jodit.editor, 'spellcheck', this.jodit.o.spellcheck);
+		// attr(this.jodit.editor, 'spellcheck', this.jodit.o.spellcheck);
+		console.log(fuze_pages);
+		for (let page of fuze_pages.pages) {
+			console.log(page);
+			attr(page.content, "spellcheck", this.jodit.o.spellcheck);
+		}
+		attr(fuze_pages.single_page, "spellcheck", this.jodit.o.spellcheck);
 	}
 
 	protected beforeDestruct(jodit: IJodit): void {}

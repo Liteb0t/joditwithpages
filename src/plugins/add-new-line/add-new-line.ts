@@ -249,6 +249,7 @@ export class addNewLine extends Plugin {
 				currentElement = parentBox;
 			}
 		}
+		console.log(currentElement);
 
 		const pos = position(currentElement as HTMLElement, this.j);
 
@@ -288,9 +289,11 @@ export class addNewLine extends Plugin {
 			this.__line.style.top = top + 'px';
 			this.__current = currentElement as HTMLElement;
 			this.__show();
+			console.log(`ClientX: ${clientX}`);
+			console.log(`Pos.left: ${pos.left}`);
 			this.__line.style.setProperty(
 				'--jd-anl-handle-offset',
-				clientX - pos.left - 10 + 'px'
+				clientX - editor.workplace.getBoundingClientRect().left - 10 + 'px'
 			);
 		} else {
 			this.__current = false;

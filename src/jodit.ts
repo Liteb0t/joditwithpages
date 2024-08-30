@@ -90,6 +90,8 @@ const __defaultClassesKey = 'data-jodit-default-classes';
  */
 export interface Jodit extends Dlgs {}
 
+export let fuze_pages;
+
 @derive(Dlgs)
 export class Jodit extends ViewWithToolbar implements IJodit, Dlgs {
 	/** @override */
@@ -1351,6 +1353,8 @@ export class Jodit extends ViewWithToolbar implements IJodit, Dlgs {
 		let editor;
 		document.addEventListener("onnewpage", event => {
 			event.detail.content.classList.add("jodit-wysiwyg");
+			this.prepareWYSIWYGEditor(event.detail.content);
+			// event.detail.content.spellcheck="false";
 		});
 
 		document.addEventListener("onpagecontentfocus", event => {
@@ -1358,9 +1362,11 @@ export class Jodit extends ViewWithToolbar implements IJodit, Dlgs {
 				this.editor = event.detail.content;
 			}
 		});
-		this.fuze_pages = new pages(workplace, {
+		fuze_pages = new pages(workplace, {
 			"frame_defined_as_element": true
 		});
+		this.fuze_pages = fuze_pages;
+		// export this.fuze_pages;
 
 		if (element.parentNode && element !== container) {
 			element.parentNode.insertBefore(container, element);
@@ -1564,6 +1570,55 @@ export class Jodit extends ViewWithToolbar implements IJodit, Dlgs {
 				);
 			}
 		});
+	}
+
+	prepareWYSIWYGEditor(content_element): void {
+		// const { editor } = this;
+		// direction
+		if (this.o.direction) {
+			const direction =
+				this.o.direction.toLowerCase() === 'rtl' ? 'rtl' : 'ltr';
+
+			content_element.style.direction = direction;
+			content_element.setAttribute('dir', direction);
+		}
+
+		// proxy events
+		this.e
+			.on(content_element, 'mousedown touchstart focus', () => {
+				const place = this.__elementToPlace.get(content_element);
+
+				if (place) {
+					this.setCurrentPlace(place);
+				}
+			})
+			.on(content_element, 'compositionend', this.synchronizeValues)
+			.on(
+				content_element,
+				'selectionchange selectionstart keydown keyup input keypress dblclick mousedown mouseup ' +
+					'click copy cut dragstart drop dragover paste resize touchstart touchend focus blur',
+				(event: Event): false | void => {
+					if (this.o.readonly || this.__isSilentChange) {
+						return;
+					}
+
+					const w = this.ew;
+					if (
+						event instanceof (w as any).KeyboardEvent &&
+						(event as KeyboardEvent).isComposing
+					) {
+						return;
+					}
+
+					if (this.e && this.e.fire) {
+						if (this.e.fire(event.type, event) === false) {
+							return false;
+						}
+
+						this.synchronizeValues();
+					}
+				}
+			);
 	}
 
 	/**
